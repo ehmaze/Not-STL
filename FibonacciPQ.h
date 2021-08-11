@@ -9,6 +9,8 @@
 #include <exception>
 #include <algorithm>
 
+namespace nstd{
+
 template<typename T, typename Comp = std::less<T>>
 class FibonacciPQ {
 private:
@@ -338,5 +340,7 @@ Node* find(const T& d) const{
 Node* min;
 std::size_t siz;
 };
+
+} // namespace nstd
 
 #endif /* FIBONACCIPQ_H */

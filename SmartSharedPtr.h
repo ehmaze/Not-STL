@@ -4,6 +4,10 @@
 #include <vector>
 #include <cstdint>
 #include <algorithm>
+#include <functional>
+#include <iostream>
+
+namespace nstd {
 
 template<typename T>
 class SmartSharedPtr {
@@ -169,5 +173,57 @@ private:
     T* data;
     std::size_t use_count_;
 };
+
+template<typename T>
+SmartSharedPtr<T>& make_shared(T& data_in) {
+    return SmartSharedPtr(data_in);
+}
+
+template<typename T>
+SmartSharedPtr<T>& make_shared(T* data_in) {
+    return SmartSharedPtr(data_in);
+}
+
+template<typename T>
+bool operator==(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return lhs.get() == rhs.get();
+}
+
+template<typename T>
+bool operator!=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return lhs.get() != rhs.get();
+}
+
+template<typename T>
+bool operator<(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return std::less<T>(*lhs, *rhs);
+}
+
+template<typename T>
+bool operator>(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return std::greater<T>(*lhs, *rhs);
+}
+
+template<typename T>
+bool operator<=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return std::greater<T>(*lhs, *rhs) || lhs.get() == rhs.get();
+}
+
+template<typename T>
+bool operator>=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+    return std::less<T>(*lhs, *rhs) || lhs.get() == rhs.get();
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const SmartSharedPtr<T>& streamer) {
+    return os << *streamer;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& is, SmartSharedPtr<T>& streamer) {
+    return is >> *streamer;
+}
+
+} // namespace nstd
 
 #endif /* SMARTSHAREDPTR_H */
