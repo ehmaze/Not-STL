@@ -205,12 +205,12 @@ bool operator>(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
 }
 
 template<typename T>
-bool operator<=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+bool operator>=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
     return std::greater<T>(*lhs, *rhs) || lhs.get() == rhs.get();
 }
 
 template<typename T>
-bool operator>=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
+bool operator<=(const SmartSharedPtr<T>& lhs, const SmartSharedPtr<T> rhs) {
     return std::less<T>(*lhs, *rhs) || lhs.get() == rhs.get();
 }
 
