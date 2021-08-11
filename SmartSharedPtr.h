@@ -113,10 +113,6 @@ public:
         return data;
     }
 
-    bool operator==(const SmartSharedPtr& rhs) const {
-        return data == this->data;
-    } // operator
-
     T* get() const noexcept {
         return data;
     }
