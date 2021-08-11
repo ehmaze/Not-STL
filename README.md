@@ -10,9 +10,10 @@ Fibonacci Priority Queue:
 - size: O(1)\
 - empty: O(1)\
 - decrease_key: O(1)\
-- - Pass in a value in the priority too, and the "lesser" value you want it to be promoted to.\
+ - Pass in a value in the priority too, and the "lesser" value you want it to be promoted to.\
 
-
+\
+\ 
 SmartSharedPointer: An RAII wrapper, with some additional functionality
 - Default ctor: constructs and empty shared pointer with no use count, and nullptr data\
 - Ctor 1: constructs a shared pointer from value T\
