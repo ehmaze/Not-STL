@@ -77,11 +77,12 @@ friend void swap(FibonacciPQ& first, FibonacciPQ& second) {
 }
 
 FibonacciPQ& operator=(FibonacciPQ rhs) noexcept {
+	std::cout << "poo\n";
 	swap(*this, rhs);
 	return *this;
 }//Assignment
 
-FibonacciPQ(FibonacciPQ&& other) noexcept :
+FibonacciPQ(FibonacciPQ&& other) :
 	FibonacciPQ() {
 	swap(*this, other);
 } // Move
