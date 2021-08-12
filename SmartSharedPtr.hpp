@@ -1,5 +1,5 @@
-#ifndef SMARTSHAREDPTR_H
-#define SMARTSHAREDPTR_H
+#ifndef SMARTSHAREDPTR_HPP
+#define SMARTSHAREDPTR_HPP
 
 #include <vector>
 #include <cstdint>
@@ -226,4 +226,4 @@ std::istream& operator>>(std::istream& is, SmartSharedPtr<T>& streamer) {
 
 } // namespace nstd
 
-#endif /* SMARTSHAREDPTR_H */
+#endif /* SMARTSHAREDPTR_HPP */

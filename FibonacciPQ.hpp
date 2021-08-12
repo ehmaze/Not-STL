@@ -1,5 +1,5 @@
-#ifndef FIBONACCIPQ_H
-#define FIBONACCIPQ_H
+#ifndef FIBONACCIPQ_HPP
+#define FIBONACCIPQ_HPP
 
 #include <functional>
 #include <cstdint>
@@ -343,4 +343,4 @@ std::size_t siz;
 
 } // namespace nstd
 
-#endif /* FIBONACCIPQ_H */
+#endif /* FIBONACCIPQ_HPP */
