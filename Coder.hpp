@@ -7,6 +7,7 @@
 #include <exception>
 #include <algorithm>
 #include <iostream>
+#include <cstdlib>
 
 class Coder {
 public:
@@ -50,22 +51,16 @@ public:
 		int cur_num = 1;
 		while (index < n) {
 			// check if most significant bit is 1
-			std::vector<int> rep = get_p_ary_representation(cur_num);
-			if (most_signigicant_bit_is_one(rep)) {
+			const std::string rep = get_p_ary_representation(cur_num);
+			if (most_signigicant_bit(rep) == 1) {
 				int rep_index = 0;
 				for (auto& row : generator) {
-					row[index] = rep[rep_index];
+					row[index] = char_to_int(rep[rep_index]);
 					rep_index++;
 				}
 				index++;
 			}
 			cur_num++;
-		}
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < n; j++) {
-				std::cout << generator[i][j] << " ";
-			}
-			std::cout << std::endl;
 		}
  	}
 
@@ -74,7 +69,42 @@ public:
 	}
 
 	std::string decode(const std::string& received) const {
-		return "";
+		std::string syndrome = compute_syndrom(received);
+
+		// get msb from syndrom
+		int msb = most_signigicant_bit(syndrome);
+		for (auto& el: syndrome) {
+			el = int_to_char(msb * char_to_int(el));
+			el = int_to_char(char_to_int(el) % p);	
+		}
+
+		// if no syndrom its the correct word
+		if (msb == 0) {
+			return received;
+		}
+
+		// find where error occured
+		int basis_num = 0;
+		bool flag = true;
+		for (int col = 0; col < n; col++) {
+			for (int row = 0; row < h; row++) {
+				if (generator[row][col] != char_to_int(syndrome[row])) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				basis_num = col;
+				break;
+			}
+			flag = true;
+		}
+
+		//compute decoded word
+		int new_val = algebraic_modulo((char_to_int(received.at(basis_num)) - msb), p);
+		std::string decoded = received;
+		decoded[basis_num] = int_to_char(new_val);
+		return decoded; 
 	}
 
 	std::string generate() const {
@@ -82,7 +112,7 @@ public:
 	}
 
 private:
-	bool is_prime(int p) {
+	bool is_prime(int p) const {
 		if (p <= 1) {
 			return false;
 		}
@@ -94,31 +124,48 @@ private:
 		return true;
 	}
 
-	bool most_signigicant_bit_is_one(const std::vector<int>& v) {
+	int most_signigicant_bit(const std::string& v) const {
 		for (const auto& el: v) {
-			if (el == 0) {
+			if (char_to_int(el) == 0) {
 				continue;
-			} else if (el == 1) {
-				return true;
 			} else {
-				return false;
+				return char_to_int(el);
 			}
 		}
-		return false;
+		return 0;
 	}
 
-	std::vector<int> get_p_ary_representation(int num) {
-		std::vector<int> rep(h, 0);
+	const std::string get_p_ary_representation(int num) const {
+		std::string rep(h, '0');
 		for (int i = 0; i < h; i++) {
-			rep[i] = num % p;
+			rep[i] = int_to_char(num % p);
 			num /= p;
 		}
 		std::reverse(rep.begin(), rep.end());
 		return rep;
 	}
 
-	int compute_dot_product(const std::string& string_in) {
+	std::string compute_syndrom(const std::string& string_in) const {
+		std::string syndrome(h, '0');
+		for (int row = 0; row < h; row++) {
+			for (int col = 0; col < n; col++) {
+				int next_val = generator[row][col] * char_to_int(string_in.at(col));
+				syndrome[row] = int_to_char((next_val + char_to_int(syndrome[row])) % p);
+			}
+		}
+		return syndrome;
+	}
 
+	inline char int_to_char(int num) const {
+		return '0' + num;
+	}
+
+	inline int char_to_int(char num) const {
+		return num - '0';
+	}
+
+	inline int algebraic_modulo(int a, int b) const {
+		return (a %= b < 0) ? a + b: a;
 	}
 };
 
