@@ -23,3 +23,7 @@ SmartSharedPointer: An RAII wrapper, with some additional functionality
 - `reset_all`: resets all use cases of this shared pointer, and deallocates data. All data set to nullptr
 - (non-member): `make_shared`, which returns a shared pointer from either value T, or dynamic pointer T
 - (non-member): `==`, `!=`, `<`, `>`, `<=`, `>=`, `<<`, `>>` operators on the contained data (only supports types supported by std::less)
+
+
+Coder: A mechanism to help you encode and decode some well-known codes
+- p-ary Hamming Codes methods: Ctor, defining p and h. `encode`, `decode`.
