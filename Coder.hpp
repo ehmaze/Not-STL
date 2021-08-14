@@ -6,7 +6,7 @@
 #include <cmath>
 #include <exception>
 #include <algorithm>
-#include <iostream>
+#include <ctime>
 #include <cstdlib>
 
 class Coder {
@@ -18,8 +18,6 @@ public:
 	virtual std::string encode(const std::string& codeword) const = 0;
 
 	virtual std::string decode(const std::string& received) const = 0;
-
-	virtual std::string generate() const = 0;
 
 protected:
 	std::vector<std::vector<int>> generator;
@@ -65,7 +63,12 @@ public:
  	}
 
 	std::string encode(const std::string& codeword) const {
-		return "";
+		srand(0);
+		int random_place = rand() % n;
+		int random_change = rand();
+		std::string encoded_word = codeword;
+		encoded_word[random_place] = int_to_char((char_to_int(encoded_word[random_place]) + random_change) % p);
+		return encoded_word;
 	}
 
 	std::string decode(const std::string& received) const {
@@ -105,10 +108,6 @@ public:
 		std::string decoded = received;
 		decoded[basis_num] = int_to_char(new_val);
 		return decoded; 
-	}
-
-	std::string generate() const {
-		return "";
 	}
 
 private:
