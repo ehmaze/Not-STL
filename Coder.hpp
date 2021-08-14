@@ -34,12 +34,12 @@ public:
 	// disable default ctor, doesnt make sense why youd call this
 	Hamming() = delete;
 
-	Hamming(int p, int h_in) :
-		Coder(p, 0, 0, 3), h{h_in} {
+	Hamming(int p_in, int h_in) :
+		Coder(p_in, 0, 0, 3), h{h_in} {
 		// must be able to create the field Z_p
-		//if (!is_prime(p)) {
-			//throw std::runtime_error("p in not prime. Therefore Z_p is not a field, which renders many of the methods used in Hamming codes obsolete");
-		//}
+		if (!is_prime(p)) {
+			throw std::runtime_error("p in not prime. Therefore Z_p is not a field, which renders many of the methods used in Hamming codes obsolete");
+		}
 		n = static_cast<int>((pow(static_cast<double>(p), static_cast<double>(h)) - 1) / (p - 1));
 		M = n - h;
 
@@ -48,7 +48,7 @@ public:
 
 		int index = 0;
 		int cur_num = 1;
-		while (index <= n) {
+		while (index < n) {
 			// check if most significant bit is 1
 			if (most_signigicant_bit_is_one(cur_num)) {
 				auto rep = get_p_ary_representation(cur_num);
@@ -83,11 +83,11 @@ public:
 
 private:
 	bool is_prime(int p) {
-		if (n <= 1) {
+		if (p <= 1) {
 			return false;
 		}
 		for (int i = 2; i < p; i++) {
-			if (i % p == 0) {
+			if (p % i == 0) {
 				return false;
 			}
 		}
