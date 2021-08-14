@@ -14,9 +14,9 @@ public:
     Coder(int p_in, int n_in, int M_in, int d_in):
 		p{p_in}, n{n_in}, M{M_in}, d{d_in}{}
 
-	virtual std::string encode(std::string codeword) const = 0;
+	virtual std::string encode(const std::string& codeword) const = 0;
 
-	virtual std::string decode(std::string received) const = 0;
+	virtual std::string decode(const std::string& received) const = 0;
 
 	virtual std::string generate() const = 0;
 
@@ -50,8 +50,8 @@ public:
 		int cur_num = 1;
 		while (index < n) {
 			// check if most significant bit is 1
-			if (most_signigicant_bit_is_one(cur_num)) {
-				auto rep = get_p_ary_representation(cur_num);
+			std::vector<int> rep = get_p_ary_representation(cur_num);
+			if (most_signigicant_bit_is_one(rep)) {
 				int rep_index = 0;
 				for (auto& row : generator) {
 					row[index] = rep[rep_index];
@@ -69,11 +69,11 @@ public:
 		}
  	}
 
-	std::string encode(std::string codeword) const {
+	std::string encode(const std::string& codeword) const {
 		return "";
 	}
 
-	std::string decode(std::string received) const {
+	std::string decode(const std::string& received) const {
 		return "";
 	}
 
@@ -94,12 +94,11 @@ private:
 		return true;
 	}
 
-	bool most_signigicant_bit_is_one(int num) {
-		for (int i = 0; i < h; i++) {
-			if (num % p == 0) {
-				num /= p;
+	bool most_signigicant_bit_is_one(const std::vector<int>& v) {
+		for (const auto& el: v) {
+			if (el == 0) {
 				continue;
-			} else if (num % p == 1) {
+			} else if (el == 1) {
 				return true;
 			} else {
 				return false;
@@ -114,7 +113,12 @@ private:
 			rep[i] = num % p;
 			num /= p;
 		}
+		std::reverse(rep.begin(), rep.end());
 		return rep;
+	}
+
+	int compute_dot_product(const std::string& string_in) {
+
 	}
 };
 
