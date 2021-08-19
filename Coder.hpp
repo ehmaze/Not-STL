@@ -19,8 +19,13 @@ public:
 
 	virtual std::string decode(const std::string& received) const = 0;
 
+	virtual void error(std::string code) {
+		std::string msg = "A " + code + " code with the given parameters does not exist";
+		throw std::runtime_error(msg);
+	}
+
 protected:
-	std::vector<std::vector<int>> generator;
+	std::vector<std::vector<int>> matrix;
 	int p;
 	int n;
 	int M;
@@ -37,13 +42,13 @@ public:
 		Coder(p_in, 0, 0, 3), h{h_in} {
 		// must be able to create the field Z_p
 		if (!is_prime(p)) {
-			throw std::runtime_error("p in not prime. Therefore Z_p is not a field, which renders many of the methods used in Hamming codes obsolete");
+			error("Hamming");
 		}
 		n = static_cast<int>((pow(static_cast<double>(p), static_cast<double>(h)) - 1) / (p - 1));
 		M = n - h;
 
 		// construct matrix
-		generator.resize(h, std::vector<int>(n));
+		matrix.resize(h, std::vector<int>(n));
 
 		int index = 0;
 		int cur_num = 1;
@@ -52,7 +57,7 @@ public:
 			const std::string rep = get_p_ary_representation(cur_num);
 			if (most_signigicant_bit(rep) == 1) {
 				int rep_index = 0;
-				for (auto& row : generator) {
+				for (auto& row : matrix) {
 					row[index] = char_to_int(rep[rep_index]);
 					rep_index++;
 				}
@@ -63,11 +68,11 @@ public:
  	}
 
 	std::string encode(const std::string& codeword) const {
-		srand(0);
+		srand(time(nullptr));
 		int random_place = rand() % n;
-		int random_change = rand();
+		int random_change = rand() % p;
 		std::string encoded_word = codeword;
-		encoded_word[random_place] = int_to_char((char_to_int(encoded_word[random_place]) + random_change) % p);
+		encoded_word[random_place] = int_to_char(random_change);
 		return encoded_word;
 	}
 
@@ -91,7 +96,7 @@ public:
 		bool flag = true;
 		for (int col = 0; col < n; col++) {
 			for (int row = 0; row < h; row++) {
-				if (generator[row][col] != char_to_int(syndrome[row])) {
+				if (matrix[row][col] != char_to_int(syndrome[row])) {
 					flag = false;
 					break;
 				}
@@ -148,7 +153,7 @@ private:
 		std::string syndrome(h, '0');
 		for (int row = 0; row < h; row++) {
 			for (int col = 0; col < n; col++) {
-				int next_val = generator[row][col] * char_to_int(string_in.at(col));
+				int next_val = matrix[row][col] * char_to_int(string_in.at(col));
 				syndrome[row] = int_to_char((next_val + char_to_int(syndrome[row])) % p);
 			}
 		}
@@ -168,5 +173,55 @@ private:
 	}
 };
 
+class Golay : public Coder {
+
+public:
+	Golay() = delete;
+
+	Golay(int p, int g) : 
+		Coder(p, 0, 0, 0) {
+		
+		if (p == 2) {
+			if (g == 24) {
+				matrix = {
+					{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+					{0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0},
+					{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1},
+					{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1},
+					{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0},
+					{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1},
+					{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1},
+					{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1},
+					{0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1}
+				};
+			} else if (g == 23) {
+				matrix = {
+					{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+					{0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1},
+					{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0},
+					{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1},
+					{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1},
+					{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0},
+					{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1},
+					{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1},
+					{0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0},
+					{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0}
+				};
+			} else {
+				error("Golay");
+			}
+		} else if (p == 3) {
+
+		} else {
+			error("Golay");
+		}
+
+	}
+};
 
 #endif
