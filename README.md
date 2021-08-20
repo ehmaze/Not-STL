@@ -10,7 +10,7 @@ Fibonacci Priority Queue:
 - `size`: O(1)
 - `empty`: O(1)
 - `decrease_key`: O(1)
--- Pass in a value in the priority too, and the "lesser" value you want it to be promoted to.
+-- Pass in a value in the priority too, and the "lesser" value you want it to be promoted to
 
 
 
@@ -22,8 +22,9 @@ SmartSharedPointer: An RAII wrapper, with some additional functionality
 - `reset`, `swap`, `use_count`, `unique`, operators `bool`, `->`, `*`: same behavior as std::shared_ptr
 - `reset_all`: resets all use cases of this shared pointer, and deallocates data. All data set to nullptr
 - (non-member): `make_shared`, which returns a shared pointer from either value T, or dynamic pointer T
-- (non-member): `==`, `!=`, `<`, `>`, `<=`, `>=`, `<<`, `>>` operators on the contained data (only supports types supported by std::less)
+- (non-member): `are_shared` see if two shared pointers are shared with one another
+- (non-member): `==`, `!=`, `<`, `>`, `<=`, `>=`, `<<`, `>>` operators on the contained data (comparison of the contained type must be supported)
 
 
 Coder: A mechanism to help you encode and decode some well-known codes
-- p-ary Hamming Codes methods: Ctor, defining p and h. `encode`, `decode`.
+- p-ary Hamming Codes methods: Ctor, defining p and h. `encode`, `decode`

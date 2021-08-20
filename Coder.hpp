@@ -81,14 +81,15 @@ public:
 
 		// get msb from syndrom
 		int msb = most_signigicant_bit(syndrome);
-		for (auto& el: syndrome) {
-			el = int_to_char(msb * char_to_int(el));
-			el = int_to_char(char_to_int(el) % p);	
-		}
-
+		
 		// if no syndrom its the correct word
 		if (msb == 0) {
 			return received;
+		}
+
+		for (auto& el: syndrome) {
+			el = int_to_char(msb * char_to_int(el));
+			el = int_to_char(char_to_int(el) % p);	
 		}
 
 		// find where error occured
