@@ -184,7 +184,7 @@ SmartSharedPtr<T>& make_shared(T* data_in) noexcept {
 }
 
 template<typename T>
-bool are_shared(const SmartSharedPtr<T>& first, const SmartSharedPtr<T>& second) {
+bool are_shared(const SmartSharedPtr<T>& first, const SmartSharedPtr<T>& second) noexcept {
     return first.get() == second.get();
 }
 

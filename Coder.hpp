@@ -41,7 +41,7 @@ public:
 	Hamming(int p_in, int h_in) :
 		Coder(p_in, 0, 0, 3), h{h_in} {
 		// must be able to create the field Z_p
-		if (!is_prime(p)) {
+		if (!is_prime(p) || p >= 10) {
 			error("Hamming");
 		}
 		n = static_cast<int>((pow(static_cast<double>(p), static_cast<double>(h)) - 1) / (p - 1));
